@@ -11,13 +11,14 @@ import {
   Server,
 } from '@loopback/core';
 import {MetadataInspector} from '@loopback/metadata';
-import grpc from 'grpc';
+import * as grpc from '@grpc/grpc-js';
 import {GRPC_METHODS} from './decorators/grpc.decorator';
 import {GrpcGenerator} from './grpc.generator';
 import {GrpcBindings} from './keys';
 import {GrpcMethod} from './types';
 
 import debugFactory from 'debug';
+
 const debug = debugFactory('loopback:grpc');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -27,6 +28,7 @@ const debug = debugFactory('loopback:grpc');
  */
 export class GrpcServer extends Context implements Server {
   private _listening = false;
+
   /**
    * @memberof GrpcServer
    * Creates an instance of GrpcServer.
@@ -35,7 +37,9 @@ export class GrpcServer extends Context implements Server {
    * CoreBindings.APPLICATION_INSTANCE).
    * @param server - The actual GRPC Server module (injected via
    * GrpcBindings.GRPC_SERVER).
-   * @param options - The configuration options (injected via
+   * @param host
+   * @param port
+   * @param generator
    * GRPCBindings.CONFIG).
    *
    */
@@ -67,10 +71,21 @@ export class GrpcServer extends Context implements Server {
   }
 
   async start(): Promise<void> {
-    this.server.bind(
-      `${this.host}:${this.port}`,
-      grpc.ServerCredentials.createInsecure(),
-    );
+    await new Promise<void>((rs, rj) => {
+      this.server.bindAsync(
+        `${this.host}:${this.port}`,
+        grpc.ServerCredentials.createInsecure(),
+        (err) => {
+          if (err) {
+            console.error('grpc server starting', err);
+            rj(err);
+            return;
+          }
+          rs();
+        },
+      );
+    });
+
     this.server.start();
     this._listening = true;
   }
@@ -89,7 +104,12 @@ export class GrpcServer extends Context implements Server {
 
     const services = new Map<
       grpc.ServiceDefinition<any>,
-      {[method: string]: grpc.handleUnaryCall<grpc.ServerUnaryCall<any>, any>}
+      {
+        [method: string]: grpc.handleUnaryCall<
+          grpc.ServerUnaryCall<any, any>,
+          any
+        >;
+      }
     >();
 
     for (const methodName in controllerMethods) {
@@ -127,6 +147,7 @@ export class GrpcServer extends Context implements Server {
       this.server.addService(service, methods);
     }
   }
+
   /**
    * Set up gRPC call
    * @param prototype
@@ -135,9 +156,9 @@ export class GrpcServer extends Context implements Server {
   private setupGrpcCall<T>(
     ctor: ControllerClass,
     methodName: string,
-  ): grpc.handleUnaryCall<grpc.ServerUnaryCall<any>, any> {
+  ): grpc.handleUnaryCall<grpc.ServerUnaryCall<any, any>, any> {
     return (
-      call: grpc.ServerUnaryCall<any>,
+      call: grpc.ServerUnaryCall<any, any>,
       callback: (err: any, value?: T) => void,
     ) => {
       const handleUnary = async (): Promise<T> => {

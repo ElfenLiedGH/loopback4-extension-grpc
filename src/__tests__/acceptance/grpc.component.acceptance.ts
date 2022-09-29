@@ -6,7 +6,7 @@
 import {Constructor, inject} from '@loopback/context';
 import {Application} from '@loopback/core';
 import {expect} from '@loopback/testlab';
-import * as grpcModule from 'grpc';
+import * as grpcModule from '@grpc/grpc-js';
 import {
   grpc,
   GrpcBindings,
@@ -22,6 +22,8 @@ import {
   TestRequest,
   TestReply,
 } from './greeter.proto';
+import * as protoLoader from '@grpc/proto-loader';
+import * as GrpcJS from '@grpc/grpc-js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -39,7 +41,7 @@ describe('GrpcComponent', () => {
   it('defines grpc component configurations', async () => {
     const app: Application = givenApplication();
     const lbGrpcServer = await app.getServer<GrpcServer>('GrpcServer');
-    expect(lbGrpcServer.getSync(GrpcBindings.PORT)).to.be.eql(8080);
+    expect(lbGrpcServer.getSync(GrpcBindings.PORT)).to.be.eql(9080);
   });
 
   // LoopBack GRPC Service
@@ -101,7 +103,7 @@ describe('GrpcComponent', () => {
       ) {}
       // tslint:disable-next-line:no-any
       async unaryCall(
-        call: grpcModule.ServerUnaryCall<any>,
+        call: grpcModule.ServerUnaryCall<any, any>,
       ): Promise<HelloReply> {
         // Do something before call
         const reply = await this.controller[this.method](call.request);
@@ -130,7 +132,7 @@ describe('GrpcComponent', () => {
 function givenApplication(
   sequence?: Constructor<GrpcSequenceInterface>,
 ): Application {
-  const grpcConfig: GrpcService = {port: 8080};
+  const grpcConfig: GrpcService = {port: 9080};
   if (sequence) {
     grpcConfig.sequence = sequence;
   }
@@ -144,10 +146,18 @@ function givenApplication(
  * Returns GRPC Client
  **/
 function getGrpcClient(app: Application) {
-  const proto = grpcModule.load('./fixtures/greeter.proto')[
-    'greeterpackage'
-  ] as grpcModule.GrpcObject;
-  const client = proto.Greeter as typeof grpcModule.Client;
+  // const proto = grpcModule.load('./fixtures/greeter.proto', 'proto', {})[
+  //   'greeterpackage'
+  // ] as grpcModule.GrpcObject;
+
+  const proto: GrpcJS.GrpcObject = GrpcJS.loadPackageDefinition(
+    protoLoader.loadSync(
+      'C:\\work\\git\\messaggio\\loopback4-extension-grpc\\src\\__tests__\\acceptance\\greeter.proto',
+    ),
+  );
+
+  const client = (proto.greeterpackage as any)
+    .Greeter as typeof grpcModule.Client;
   return new client(
     `${app.getSync(GrpcBindings.HOST)}:${app.getSync(GrpcBindings.PORT)}`,
     grpcModule.credentials.createInsecure(),

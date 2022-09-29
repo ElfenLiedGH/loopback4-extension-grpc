@@ -5,7 +5,7 @@
 
 import {BindingKey, Context} from '@loopback/context';
 import {CoreBindings} from '@loopback/core';
-import {Server} from 'grpc';
+import {Server} from '@grpc/grpc-js';
 import {GrpcSequenceInterface} from './grpc.sequence';
 
 /**

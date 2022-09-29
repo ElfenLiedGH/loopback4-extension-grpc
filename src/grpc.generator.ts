@@ -5,11 +5,11 @@
 
 import {execSync} from 'child_process';
 import * as glob from 'glob';
-import * as grpc from 'grpc';
-import {GrpcObject} from 'grpc';
+import * as grpc from '@grpc/grpc-js';
+import {GrpcObject} from '@grpc/grpc-js';
 import * as path from 'path';
 import {GrpcService} from './types';
-
+import * as protoLoader from '@grpc/proto-loader';
 /**
  * GRPC TypeScript generator.
  * This class will iterate over a directory generating
@@ -36,7 +36,9 @@ export class GrpcGenerator {
     this.getProtoPaths().forEach((protoPath: string) => {
       const protoName: string = protoPath.split('/').pop() ?? '';
       this.protos[protoName] = this.loadProto(protoPath);
-      this.generate(protoPath);
+      if (process.env.NODE_ENV !== 'production') {
+        this.generate(protoPath);
+      }
     });
   }
   /**
@@ -57,7 +59,9 @@ export class GrpcGenerator {
    * @param protoPath
    */
   public loadProto(protoPath: string): GrpcObject {
-    const proto: GrpcObject = grpc.load(protoPath);
+    const proto: GrpcObject = grpc.loadPackageDefinition(
+      protoLoader.loadSync(protoPath),
+    );
     return proto;
   }
   /**

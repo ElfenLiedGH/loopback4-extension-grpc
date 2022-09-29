@@ -1,5 +1,5 @@
 {
-  "name": "@loopback/grpc",
+  "name": "loopback4-extension-grpc",
   "version": "0.2.0",
   "description": "A gRPC extension for LoopBack Next",
   "main": "dist/index.js",
@@ -40,16 +40,9 @@
     "url": "https://github.com/strongloop/loopback4-extension-grpc/issues"
   },
   "homepage": "https://github.com/strongloop/loopback4-extension-grpc#readme",
-  "files": [
-    "README.md",
-    "index.js",
-    "index.d.ts",
-    "dist",
-    "compilers",
-    "src",
-    "!*/__tests__"
-  ],
   "dependencies": {
+    "@grpc/grpc-js": "^1.7.1",
+    "@grpc/proto-loader": "^0.7.3",
     "@loopback/context": "^3.9.0",
     "@loopback/core": "^2.8.0",
     "@loopback/metadata": "^2.2.0",
@@ -58,7 +51,6 @@
     "@mean-expert/protoc-ts": "0.0.2",
     "debug": "^4.1.1",
     "glob": "^7.1.6",
-    "grpc": "^1.24.3",
     "protobufjs": "^6.9.0"
   },
   "devDependencies": {

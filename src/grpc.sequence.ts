@@ -4,7 +4,7 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {inject} from '@loopback/context';
-import {ServerUnaryCall} from 'grpc';
+import {ServerUnaryCall} from '@grpc/grpc-js';
 import {GrpcBindings} from './keys';
 
 import debugFactory from 'debug';
@@ -15,7 +15,7 @@ const debug = debugFactory('loopback:grpc');
  */
 export interface GrpcSequenceInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  unaryCall(request: ServerUnaryCall<any>): Promise<any>;
+  unaryCall(request: ServerUnaryCall<any, any>): Promise<any>;
 }
 
 /**
@@ -29,7 +29,7 @@ export class GrpcSequence implements GrpcSequenceInterface {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async unaryCall(call: ServerUnaryCall<any>): Promise<any> {
+  async unaryCall(call: ServerUnaryCall<any, any>): Promise<any> {
     // Do something before call
     debug(
       'Calling %s.%s',

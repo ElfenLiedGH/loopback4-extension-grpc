@@ -1,8 +1,3 @@
-// Copyright IBM Corp. 2019. All Rights Reserved.
-// Node module: @loopback/grpc
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
-
 export namespace Greeter {
   /**
    * @interface Greeter.Service
@@ -37,12 +32,12 @@ export namespace Greeter {
    * from the given gRPC Greeter service.
    */
   export namespace SayHello {
-    export const PROTO_NAME = 'greeter.proto';
-    export const PROTO_PACKAGE = 'greeterpackage';
-    export const SERVICE_NAME = 'Greeter';
-    export const METHOD_NAME = 'SayHello';
-    export const REQUEST_STREAM = false;
-    export const RESPONSE_STREAM = false;
+    export const PROTO_NAME: string = 'greeter.proto';
+    export const PROTO_PACKAGE: string = 'greeterpackage';
+    export const SERVICE_NAME: string = 'Greeter';
+    export const METHOD_NAME: string = 'SayHello';
+    export const REQUEST_STREAM: boolean = false;
+    export const RESPONSE_STREAM: boolean = false;
   }
   /**
    * @namespace Greeter.SayTest
@@ -52,12 +47,12 @@ export namespace Greeter {
    * from the given gRPC Greeter service.
    */
   export namespace SayTest {
-    export const PROTO_NAME = 'greeter.proto';
-    export const PROTO_PACKAGE = 'greeterpackage';
-    export const SERVICE_NAME = 'Greeter';
-    export const METHOD_NAME = 'SayTest';
-    export const REQUEST_STREAM = false;
-    export const RESPONSE_STREAM = false;
+    export const PROTO_NAME: string = 'greeter.proto';
+    export const PROTO_PACKAGE: string = 'greeterpackage';
+    export const SERVICE_NAME: string = 'Greeter';
+    export const METHOD_NAME: string = 'SayTest';
+    export const REQUEST_STREAM: boolean = false;
+    export const RESPONSE_STREAM: boolean = false;
   }
 }
 /**
@@ -71,16 +66,6 @@ export interface HelloRequest {
   name: string;
 }
 /**
- * @interface HelloReply
- * @author Jonathan Casarrubias <t: johncasarrubias>
- * @license MIT
- * @description HelloReply interface that provides properties
- * and typings from the given gRPC HelloReply Message.
- */
-export interface HelloReply {
-  message: string;
-}
-/**
  * @interface TestRequest
  * @author Jonathan Casarrubias <t: johncasarrubias>
  * @license MIT
@@ -89,6 +74,16 @@ export interface HelloReply {
  */
 export interface TestRequest {
   name: string;
+}
+/**
+ * @interface HelloReply
+ * @author Jonathan Casarrubias <t: johncasarrubias>
+ * @license MIT
+ * @description HelloReply interface that provides properties
+ * and typings from the given gRPC HelloReply Message.
+ */
+export interface HelloReply {
+  message: string;
 }
 /**
  * @interface TestReply
