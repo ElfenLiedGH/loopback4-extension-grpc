@@ -60,7 +60,7 @@ export class GrpcGenerator {
    */
   public loadProto(protoPath: string): GrpcObject {
     const proto: GrpcObject = grpc.loadPackageDefinition(
-      protoLoader.loadSync(protoPath),
+      protoLoader.loadSync(protoPath, {keepCase:true}),
     );
     return proto;
   }
